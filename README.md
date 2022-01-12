@@ -2,7 +2,7 @@
 
 A web interface for composing (with) automorphisms in the 'colored Cube Dance'.
 
-Try the web interface [here !](https://alexpof.github.io/Web_ColorCubeDance/)
+Try the web interface [here !](https://alexpof.github.io/Web_ColoredCubeDance/)
 Don't forget to check the help to familiarize yourself with the interface.
 
 # What is it about ?
