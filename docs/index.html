@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
+<style>
+
+  body {
+    font-family: 'Oswald', sans-serif;
+    font-size:14px;
+  }
+  .table_automorphisms {
+	margin: 0px 0px;
+	border-width: 0px 0;
+	border-collapse: collapse;
+	border-spacing: 0em;
+	cellspacing:0;
+  border-bottom: 1px solid darkgray;
+  border-top: 1px solid darkgray;
+  width:100%;
+  }
+
+
+.button {
+  background-color: #e7e7e7;
+  border: none;
+  color: black;
+  padding: 5px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  width: 40px;
+}
+.button_active {
+  background-color: #008CBA;
+  border: none;
+  color: white;
+  padding: 5px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  width: 40px;
+}
+
+.chordNodeText {
+font-family: 'Oswald', sans-serif;
+font-size:14px;
+fill:lightgray;
+text-anchor:middle;
+-webkit-user-select: none; /* Safari */
+-moz-user-select: none; /* Firefox */
+-ms-user-select: none; /* IE10+/Edge */
+user-select: none; /* Standard */
+}
+
+.chordNodeCircle {
+    stroke-width:2;
+}
+
+.svg-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* aspect ratio */
+  vertical-align: top;
+  overflow: hidden;
+}
+.svg-content-responsive {
+  display: inline-block;
+  position: absolute;
+  top: 10px;
+  left: 0;
+}
+
+  .customMenuHeader {
+  background-color:#dddddd;
+  }
+
+  .customMenuHeader:hover > div  {
+   display:block;
+  }
+
+  .customMenu {
+   background-color:#fafafa;
+   position:absolute;
+   display:none;
+   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  }
+  .chordItem:hover {
+    cursor:pointer;
+    background-color:lightblue;
+  }
+
+</style>
+	<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+	<script src="UPL_automorphisms.js"></script>
+	<script src="UPL_operations.js"></script>
+</head>
+<body>
+  <div>
+  <div id="automorphism_selector_div" class="column" style="float:left; width: 20%; background-color:#FAFAFA;">
+  <center>
+    <p style="font-size:18px">Automorphism selection</p>
+    1. Choose a mapping of the generators:<br>
+	<table>
+		<tr>
+			<th>U</th>
+			<th><font style="color:forestgreen">L</font></th>
+			<th><font style="color:darkorange">P</font></th>
+		</tr>
+		<tr>
+			<td>
+				<button class="button_active" id="U" onclick="U_click();">U</button>
+				<button class="button" id="LUL" onclick="LUL_click();">LUL</button>
+			</td>
+			<td>
+				<button class="button_active" id="L_L" onclick="L_L_click();">L</button>
+				<button class="button" id="L_P" onclick="L_P_click();">P</button>
+				<button class="button" id="L_PLP" onclick="L_PLP_click();">PLP</button>
+			</td>
+			<td>
+				<button class="button_active" id="P_1" onclick="P_1_click();">P</button>
+				<button class="button" id="P_2" onclick="P_2_click();">PLP</button>
+			</td>
+		</tr>
+	</table>
+  <br>
+  2. Choose a permutation of the augmented chords:<br>
+  <table>
+  <tr>
+  <td>
+  <button class="button" id="perm_prev" onclick="change_augmented_perm(-1);"><</button>
+  </td>
+  <td>
+	<svg id="perm_augmented" height="100%" width="100%" viewBox="0 0 200 200" preserveAspectRatio="xMinYMin meet" style="baseline-shift:10;">
+    <defs>
+      <marker id='head' orient='auto' markerWidth='2' markerHeight='4'
+              refX='0.1' refY='2'>
+        <path d='M0,0 V4 L2,2 Z' fill='#008CBA' />
+      </marker>
+    </defs>
+    <g id="Caug_node" transform="translate(100,20)">
+      <circle class="chordNodeCircle" cy="5" r="18" stroke="lightgray" fill="white" opacity="1.0"/>
+      <text class="chordNodeText" x="0" y="7">C<tspan dy="8" style="font-size:10px;">aug</tspan></text>
+    </g>
+    <g id="Gaug_node" transform="translate(180,90)">
+      <circle class="chordNodeCircle" cy="5" r="18" stroke="lightgray" fill="white" opacity="1.0"/>
+      <text class="chordNodeText" x="0" y="7">G<tspan dy="8" style="font-size:10px;">aug</tspan></text>
+    </g>
+    <g id="Daug_node" transform="translate(100,160)">
+      <circle class="chordNodeCircle" cy="5" r="18" stroke="lightgray" fill="white" opacity="1.0"/>
+      <text class="chordNodeText" x="0" y="7">D<tspan dy="8" style="font-size:10px;">aug</tspan></text>
+    </g>
+    <g id="Faug_node" transform="translate(20,90)">
+      <circle class="chordNodeCircle" cy="5" r="18" stroke="lightgray" fill="white" opacity="1.0"/>
+      <text class="chordNodeText" x="0" y="7">F<tspan dy="8" style="font-size:10px;">aug</tspan></text>
+    </g>
+  </svg>
+  </td>
+  <td>
+  <button class="button" id="perm_next" onclick="change_augmented_perm(1);">></button>
+  </td>
+  </tr>
+  </table>
+
+  3. Choose an image for each chord.
+  <br>(The mapping of the remaining chords is automatically determined.)
+  <br>
+  <table>
+    <tr>
+      <td class="customMenuHeader"><button class="button" id="quadrant1">C<sub>M</sub></button>
+    <div class="customMenu">
+        <table>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant1');">C<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant1');">E<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant1');">G&#9839;<sub>M</sub></td>
+        </tr>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant1');">C<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant1');">E<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant1');">G&#9839;<sub>m</sub></td>
+        </tr>
+        </table>
+    </div>
+    </td>
+    <td><img src="arrow_right.png" height=24></td>
+      <td><button class="button" id="quadrant1_choice0" onclick="quadrant1_click(0);">C<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant1_choice1" onclick="quadrant1_click(1);">E<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant1_choice2" onclick="quadrant1_click(2);">G&#9839;<sub>M</sub></button></td>
+    </tr>
+    <tr>
+      <td class="customMenuHeader"><button class="button" id="quadrant2">G<sub>M</sub></button>
+    <div class="customMenu">
+        <table>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant2');">G<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant2');">B<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant2');">E&#9837;<sub>M</sub></td>
+        </tr>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant2');">G<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant2');">B<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant2');">E&#9837;<sub>m</sub></td>
+        </tr>
+        </table>
+    </div>
+    </td>
+      <td><img src="arrow_right.png" height=24></td>
+      <td><button class="button" id="quadrant2_choice0" onclick="quadrant2_click(0);">G<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant2_choice1" onclick="quadrant2_click(1);">B<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant2_choice2" onclick="quadrant2_click(2);">E&#9837;<sub>M</sub></button></td>
+    </tr>
+    <tr>
+      <td class="customMenuHeader"><button class="button" id="quadrant3">D<sub>M</sub></button>
+    <div class="customMenu">
+        <table>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant3');">D<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant3');">F&#9839;<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant3');">B&#9837;<sub>M</sub></td>
+        </tr>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant3');">D<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant3');">F&#9839;<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant3');">B&#9837;<sub>m</sub></td>
+        </tr>
+        </table>
+    </div>
+    </td>
+      <td><img src="arrow_right.png" height=24></td>
+      <td><button class="button" id="quadrant3_choice0" onclick="quadrant3_click(0);">D<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant3_choice1" onclick="quadrant3_click(1);">F&#9839;<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant3_choice2" onclick="quadrant3_click(2);">B&#9837;<sub>M</sub></button></td>
+    </tr>
+    <tr>
+      <td class="customMenuHeader"><button class="button" id="quadrant4">F<sub>M</sub></button>
+    <div class="customMenu">
+        <table>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant4');">F<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant4');">A<sub>M</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant4');">C&#9839;<sub>M</sub></td>
+        </tr>
+        <tr>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant4');">F<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant4');">A<sub>m</sub></td>
+            <td class="chordItem" onClick="changeMenuChord.call(this,'quadrant4');">C&#9839;<sub>m</sub></td>
+        </tr>
+        </table>
+    </div>
+    </td>
+      <td><img src="arrow_right.png" height=24></td>
+      <td><button class="button" id="quadrant4_choice0" onclick="quadrant4_click(0);">F<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant4_choice1" onclick="quadrant4_click(1);">A<sub>M</sub></button></td>
+      <td><button class="button" id="quadrant4_choice2" onclick="quadrant4_click(2);">C&#9839;<sub>M</sub></button></td>
+    </tr>
+  </table>
+<br>
+<p id="selected_automorphism_info"></p>
+</center>
+</div>
+<img src="help_button.png" style="text-align:center;" height="32" onclick="d3.select('#coverdiv_help').style('display','block');d3.select('#contentdiv_help').style('display','block');">
+<div id="cube_dance_div" style="width:50%; float:left;display: block;">
+        <center>
+      <svg id="left_cubedance" viewBox="0 0 600 700" preserveAspectRatio="xMinYMin meet">
+      </svg>
+      </center>
+</div>
+<div style="float:left; width:30%;">
+  <div id="chord_transformations">
+    <center><p id="chord_progression" style="font-size: 14px;">Transformation of chords</p></center>
+	<div id="successive_transformations">
+	</div>
+  </div>
+</div>
+<div id="coverdiv_help" style="display:none; background:white; opacity:0.9; position:absolute; top:0px; left:0px; height:100%; width:100%">
+</div>
+<div id="contentdiv_help" style="display:none; background:white; opacity:1.0; border: 1px solid black; box-shadow: 5px 5px 10px lightgray;position:absolute; top:10%; left:10%; width:80%">
+  <img src="close_icon.png" style="text-align:center;" height="32" onclick="d3.select('#help1').style('display','block');d3.select('#help2').style('display','none');d3.select('#help3').style('display','none');d3.select('#coverdiv_help').style('display','none');d3.select('#contentdiv_help').style('display','none');">
+  <span style="text-decoration:none;font-size:20px;">Help:
+  <a href="#" style="text-decoration:none;" onClick="d3.select('#help1').style('display','block');d3.select('#help2').style('display','none');d3.select('#help3').style('display','none');">part 1</a>
+  -
+  <a href="#" style="text-decoration:none;" onClick="d3.select('#help1').style('display','none');d3.select('#help2').style('display','block');d3.select('#help3').style('display','none');">part 2</a>
+  -
+  <a href="#" style="text-decoration:none;" onClick="d3.select('#help1').style('display','none');d3.select('#help2').style('display','none');d3.select('#help3').style('display','block');">part 3</a>
+</span>
+  <div id="help1" style="display:block;">
+    <center>
+      <table>
+        <tr>
+          <td>
+            <img src="help_2_1.png" width="300px">
+          </td>
+          <td>
+            The central part shows the Colored Cube Dance.<br><br>
+            It is an extension of the Cube Dance of Douthett and Steinbach in which the unique parsimonious relation relating major, minor, and augmented chords is refined
+            using three different binary relations notated U, P, and L. The binary relations P and L are similar to the corresponding neo-Riemannian transformations, while
+            the U binary relation relates major and minor chords to augmented chords.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="help_2_2.png" width="300px">
+          </td>
+          <td>
+            If an automorphism has been completely selected (see next part), hovering over a chord will highlight its corresponding image in blue. Clicking on the chord will play it.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <img src="help_2_3.png" width="200px;">
+          </td>
+          <td>
+            If the Option key is pressed down, hovering over a chord will highlight it in orange and clicking on it will add it to the current chord progression.
+          </td>
+        </tr>
+    </table>
+  </div>
+
+  <div id="help2" style="display:none;">
+    <table>
+      <tr>
+        <td>
+        </td>
+        <td>
+          An automorphism of the Colored Cube Dance is completely determined by three pieces of information:
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="help_1_1.png">
+        </td>
+        <td>
+          1. The mapping of the generators U,P, and L of the Colored Cube Dance, i.e. the binary relations that relate the major, minor, and augmented chords.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="help_1_2.png">
+        </td>
+        <td>
+          2. The mapping of the augmented chords. Eight possible permutations are allowed, which can be chosen using the left and right arrows.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="help_1_3.png">
+        </td>
+        <td>
+          3. A mapping of the major and minor chords. Only the image of one chord in each quadrant is required, as the rest of the mapping will be automatically determined
+            from the selected mapping of the generators and of the augmented chords. The chord in each quadrant can be selected in the corresponding dropdown menu, and
+            a choice of three allowed images will be displayed correspondingly.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="help_1_4.png">
+      </td>
+      <td>
+        When an automorphism has been completely determined, its internal index will appear and you can add it to the list of automorphism that transform the
+        chord progression on the right.
+      </td>
+      </tr>
+  </table>
+  </div>
+  <div id="help3" style="display:none;">
+    <table>
+      <tr>
+        <td>
+          <img src="help_3_1.png">
+        </td>
+        <td>
+          Added chords are shown on the "START" line. The last chord can be removed by clicking on the backspace icon.
+          <br><br>
+          Each added automorphism successively transforms the chord progression. Automorphisms can be reordered using the up and down arrows, can be deleted
+          by clicking on the trash bin icon, and can be duplicated by clicking on the corresponding icon. Clicking on the automorphism index number will display
+          its corresponding information in the automorphism selector on the left.
+          <br><br>
+          Each chord progression can be played and stopped using the corresponding buttons. The looking glass icon will show the chords in the Colored Cube Dance in
+          the center of the page.
+        </td>
+      </tr>
+  </table>
+  </div>
+</div>
+</body>
+  <script src="jzz.js"></script>
+  <script src="JZZ.synth.Tiny.min.js"></script>
+	<script src="selector.js"></script>
+	<script src="chordtransform.js"></script>
+  <script src="cubedance.js"></script>
+</html>
